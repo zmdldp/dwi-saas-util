@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    com.dwi.basic.log.LogAutoConfiguration
+org.springframework.context.ApplicationContextInitializer=\
+    com.dwi.basic.log.SaasMdcAdapterInitializer
