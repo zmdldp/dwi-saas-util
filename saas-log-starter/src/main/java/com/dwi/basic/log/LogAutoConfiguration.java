@@ -1,6 +1,7 @@
 package com.dwi.basic.log;
 
 
+import com.dwi.basic.context.ContextUtil;
 import com.dwi.basic.jackson.JsonUtil;
 import com.dwi.basic.log.aspect.SysLogAspect;
 import com.dwi.basic.log.event.SysLogListener;
@@ -41,7 +42,7 @@ public class LogAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnExpression("${saas.log.enabled:true} && 'LOGGER'.equals('${saas.log.type:LOGGER}')")
-    public SysLogListener sysLogListener() {
-        return new SysLogListener(log -> PointUtil.debug("0", "OPT_LOG", JsonUtil.toJson(log)));
+    public SysLogListener sysLogListener() { 	
+        return new SysLogListener(log -> PointUtil.debug(ContextUtil.getUserIdStr(), "OPT_LOG", JsonUtil.toJson(log)));
     }
 }

@@ -34,9 +34,7 @@ public class SysLogListener {
             log.warn("租户编码不存在，忽略操作日志=={}", sysLog != null ? sysLog.getRequestUri() : "");
             return;
         }
-        //TODO 
         ContextUtil.setTenant(sysLog.getTenantCode());
-
         consumer.accept(sysLog);
     }
 
