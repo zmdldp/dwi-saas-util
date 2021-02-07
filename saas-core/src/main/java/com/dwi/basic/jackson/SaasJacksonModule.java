@@ -12,7 +12,6 @@ import com.dwi.basic.base.BaseEnum;
 import com.dwi.basic.converter.EnumDeserializer;
 import com.dwi.basic.converter.EnumSerializer;
 import com.dwi.basic.converter.SaasLocalDateTimeDeserializer;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;

@@ -3,6 +3,8 @@ package com.dwi.basic.boot.handler;
 import cn.hutool.core.util.StrUtil;
 import com.dwi.basic.base.R;
 import com.dwi.basic.exception.BizException;
+import com.dwi.basic.exception.ForbiddenException;
+import com.dwi.basic.exception.UnauthorizedException;
 import com.dwi.basic.exception.code.ExceptionCode;
 import com.dwi.basic.utils.StrPool;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +55,20 @@ public abstract class AbstractGlobalExceptionHandler {
     @ExceptionHandler(BizException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R bizException(BizException ex) {
+        log.warn("BizException:", ex);
+        return R.result(ex.getCode(), null, ex.getMessage(), ex.getLocalizedMessage()).setPath(getPath());
+    }
+    
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public R forbiddenException(ForbiddenException ex) {
+        log.warn("BizException:", ex);
+        return R.result(ex.getCode(), null, ex.getMessage(), ex.getLocalizedMessage()).setPath(getPath());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public R unauthorizedException(UnauthorizedException ex) {
         log.warn("BizException:", ex);
         return R.result(ex.getCode(), null, ex.getMessage(), ex.getLocalizedMessage()).setPath(getPath());
     }

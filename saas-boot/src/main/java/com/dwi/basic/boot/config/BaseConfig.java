@@ -5,12 +5,15 @@ import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.dwi.basic.boot.undertow.UndertowServerFactoryCustomizer;
+import com.dwi.basic.converter.RemoteDataDeserializer;
 import com.dwi.basic.converter.String2DateConverter;
 import com.dwi.basic.converter.String2LocalDateConverter;
 import com.dwi.basic.converter.String2LocalDateTimeConverter;
 import com.dwi.basic.converter.String2LocalTimeConverter;
 import com.dwi.basic.jackson.SaasJacksonModule;
+import com.dwi.basic.model.RemoteData;
 import com.dwi.basic.utils.SpringUtils;
 import io.undertow.Undertow;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -93,10 +96,10 @@ public abstract class BaseConfig {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 //单引号处理
                 .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-                //反序列化时，属性不存在的兼容处理
-//                .getDeserializationConfig()
-//                .withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        objectMapper.registerModule(new SaasJacksonModule()).findAndRegisterModules();
+        objectMapper.registerModule(new SaasJacksonModule())
+		        .registerModule(new SimpleModule().addDeserializer(RemoteData.class, RemoteDataDeserializer.INSTANCE))
+		        .findAndRegisterModules();
+        
         return objectMapper;
     }
 

@@ -4,6 +4,8 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dwi.basic.context.ContextConstants;
 import com.dwi.basic.context.ContextUtil;
+import com.dwi.basic.utils.StrPool;
+
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import io.seata.core.context.RootContext;
@@ -41,6 +43,7 @@ public class FeignAddHeaderRequestInterceptor implements RequestInterceptor {
         if (StrUtil.isNotEmpty(xid)) {
             template.header(RootContext.KEY_XID, xid);
         }
+        template.header(ContextConstants.FEIGN, StrPool.TRUE);
 
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {

@@ -2,7 +2,9 @@ package com.dwi.basic.security.aspect;
 
 import cn.hutool.core.util.StrUtil;
 import com.dwi.basic.annotation.security.PreAuth;
+import com.dwi.basic.context.ContextConstants;
 import com.dwi.basic.exception.BizException;
+import com.dwi.basic.exception.ForbiddenException;
 import com.dwi.basic.exception.code.ExceptionCode;
 import com.dwi.basic.utils.StrPool;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +26,13 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.reflect.Method;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * AOP 鉴权
@@ -102,6 +109,11 @@ public class UriSecurityPreAuthAspect implements ApplicationContextAware {
             log.debug("执行方法[{}]无需校验权限", methodName);
             return;
         }
+        
+        // feign 远程调用
+        if (isFeign(methodName)) {
+            return;
+        }
 
         String condition = getCondition(preAuth, targetClass);
         if (StrUtil.isBlank(condition)) {
@@ -109,9 +121,30 @@ public class UriSecurityPreAuthAspect implements ApplicationContextAware {
         }
         Boolean hasPermit = invokePermit(point, method, condition);
         if (!hasPermit) {
-            throw BizException.wrap(ExceptionCode.UNAUTHORIZED.build("执行方法[%s]需要[%s]权限", methodName, condition));
+            throw ForbiddenException.wrap(ExceptionCode.UNAUTHORIZED.build("执行方法[%s]需要[%s]权限", methodName, condition));
         }
     }
+    
+    /**
+     * 伪造->安全性? 
+     * 
+     * @param methodName
+     * @return
+     */
+    private boolean isFeign(String methodName) {
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (requestAttributes != null) {
+            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+            if (request != null) {
+                if (StrPool.TRUE.equals(request.getHeader(ContextConstants.FEIGN))) {
+                    log.debug("内部调用方法[{}]无需校验权限", methodName);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     @Nullable
     private Boolean invokePermit(ProceedingJoinPoint point, Method method, String condition) {
