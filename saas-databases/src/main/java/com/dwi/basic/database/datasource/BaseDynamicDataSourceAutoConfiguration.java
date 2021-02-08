@@ -23,7 +23,7 @@ import java.util.Map;
  * saas.database.multiTenantType=DATASOURCE时， 子类需要继承它，并让程序启动时加载
  * <p>
  * 参考：https://github.com/baomidou/dynamic-datasource-spring-boot-starter/wiki/Debug-SourceCode
- *
+ *	    和mybatis-plus-boot-starter\3.4.1\mybatis-plus-boot-starter-3.4.1.jar:MybatisPlusAutoConfiguration.java
  * @author TaoYu Kanyuxia
  * @author dwi
  * @since 1.0.0

@@ -19,7 +19,7 @@ import static com.dwi.basic.swagger2.Swagger2Configuration.TRUE;
  * @date 2018/11/18 9:20
  */
 @EnableSwagger2WebMvc
-@ConditionalOnProperty(prefix = "knife4j", name = "enabled", havingValue = TRUE, matchIfMissing = true)
+@ConditionalOnProperty(prefix = "knife4j", name = "enable", havingValue = TRUE, matchIfMissing = true)
 @Import(BeanValidatorPluginsConfiguration.class)
 public class Swagger2Configuration {
 

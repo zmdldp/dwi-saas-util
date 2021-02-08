@@ -88,6 +88,8 @@ public abstract class BaseMasterDatabaseConfiguration extends BaseDatabaseConfig
     }
 
     /**
+     * 
+     * 
      * 数据源信息
      *
      * @return Druid数据源
@@ -109,6 +111,12 @@ public abstract class BaseMasterDatabaseConfiguration extends BaseDatabaseConfig
     }
 
     /**
+     * MP starter中 初始化SqlSessionFactory bean有@ConditionalOnMissingBean条件, 
+     * 且在mysql.yml中spring:
+  	 *					autoconfigure:
+     *						exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+     * 排除了SpringBoot数据源自动配置, 所以需要自己创建数据源!!!
+     * 
      * mybatis Sql Session 工厂
      *
      * @return sql链接工厂
