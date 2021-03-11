@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-    com.dwi.basic.msg.CacheAutoConfigure
+    com.dwi.basic.msg.RedisAutoConfigure

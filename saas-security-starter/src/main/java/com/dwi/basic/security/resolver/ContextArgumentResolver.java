@@ -76,7 +76,7 @@ public class ContextArgumentResolver implements HandlerMethodArgumentResolver {
                                 .roles(loginUser.isRoles())
                                 .resource(loginUser.isResource())
                                 .build());
-                if (result.getIsSuccess() && result.getData() != null) {
+                if (result.isSuccess() && result.getData() != null) {
                     return result.getData();
                 }
             }

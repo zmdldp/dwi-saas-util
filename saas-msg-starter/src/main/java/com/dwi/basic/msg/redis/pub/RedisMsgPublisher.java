@@ -1,4 +1,4 @@
-package com.dwi.basic.msg.pub.redis;
+package com.dwi.basic.msg.redis.pub;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -14,9 +14,13 @@ public class RedisMsgPublisher {
 
     private final RedisTemplate<String, Object> redisTemplate;
     
-    private final ChannelTopic topic;
-
-    public void sendMsg(String msg){
+    /**
+     * 发布消息
+     * 
+     * @param topic
+     * @param msg
+     */
+    public void sendMsg(ChannelTopic topic, String msg){
         redisTemplate.convertAndSend(topic.getTopic(), msg);
 	}
 

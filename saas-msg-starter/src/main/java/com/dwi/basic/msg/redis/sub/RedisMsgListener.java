@@ -1,11 +1,10 @@
-package com.dwi.basic.msg.sub.redis;
+package com.dwi.basic.msg.redis.sub;
 
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
-@Component
-public class MsgListener implements MessageListener {
+public class RedisMsgListener implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {

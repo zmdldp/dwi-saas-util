@@ -20,25 +20,6 @@ import org.springframework.context.annotation.Import;
 })
 public class MsgAutoConfigure {
 
-    /**
-     * key 的生成
-     *
-     */
-    @Bean
-    public KeyGenerator keyGenerator() {
-        return (target, method, objects) -> {
-            StringBuilder sb = new StringBuilder();
-            sb.append(target.getClass().getName());
-            sb.append(StrPool.COLON);
-            sb.append(method.getName());
-            for (Object obj : objects) {
-                if (obj != null) {
-                    sb.append(StrPool.COLON);
-                    sb.append(obj.toString());
-                }
-            }
-            return sb.toString();
-        };
-    }
+    
 
 }

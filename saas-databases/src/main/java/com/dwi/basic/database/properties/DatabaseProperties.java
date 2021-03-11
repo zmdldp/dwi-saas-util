@@ -155,7 +155,7 @@ public class DatabaseProperties {
          * Customer epoch, unit as second. For example 2016-05-20 (ms: 1463673600000)
          * 可以改成你的项目开始开始的时间
          */
-        private String epochStr = "2020-09-15";
+        private String epochStr = "2021-03-14";
     }
 
 }

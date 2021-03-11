@@ -103,7 +103,7 @@ public class VerifyAuthFunction {
         Set<String> resources = new HashSet<>();
 
         R<SysUser> result = userResolverService.getById(UserQuery.buildResource());
-        if (result.getIsSuccess() && result.getData() != null && result.getData().getResources() != null) {
+        if (result.isSuccess() && result.getData() != null && result.getData().getResources() != null) {
             SysUser sysUser = result.getData();
             resources = new HashSet<>(sysUser.getResources());
         }
@@ -152,7 +152,7 @@ public class VerifyAuthFunction {
         Set<String> roles = new HashSet<>();
 
         R<SysUser> result = userResolverService.getById(UserQuery.buildRoles());
-        if (result.getIsSuccess() && result.getData() != null && result.getData().getRoles() != null) {
+        if (result.isSuccess() && result.getData() != null && result.getData().getRoles() != null) {
             SysUser sysUser = result.getData();
             roles = sysUser.getRoles().stream().map(SysRole::getCode).collect(Collectors.toSet());
         }

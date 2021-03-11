@@ -108,7 +108,7 @@ public class SysLogAspect {
                     sysLogDTO.setResult(getText(String.valueOf(ret == null ? StrPool.EMPTY : ret)));
                 }
             } else {
-                if (r.getIsSuccess()) {
+                if (r.isSuccess()) {
                     sysLogDTO.setType("OPT");
                 } else {
                     sysLogDTO.setType("EX");

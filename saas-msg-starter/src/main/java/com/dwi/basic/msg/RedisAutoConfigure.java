@@ -38,10 +38,11 @@ public class RedisAutoConfigure {
         return template;
     }
 
-    private void setSerializer(RedisConnectionFactory factory, RedisTemplate template) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	private void setSerializer(RedisConnectionFactory factory, RedisTemplate template) {
     	//key序列化
-        RedisSerializer keySerializer = new StringRedisSerializer();
-        RedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer();
+        RedisSerializer<?> keySerializer = new StringRedisSerializer();
+        RedisSerializer<?> valueSerializer = new GenericJackson2JsonRedisSerializer();
         template.setKeySerializer(keySerializer);
         template.setHashKeySerializer(keySerializer);
         template.setHashValueSerializer(valueSerializer);

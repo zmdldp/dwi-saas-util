@@ -1,6 +1,7 @@
 package com.dwi.basic.database.properties;
 
 import lombok.Getter;
+import java.util.stream.Stream;
 
 /**
  * 多租户类型
@@ -52,4 +53,13 @@ public enum MultiTenantType {
         }
         return eq(val.name());
     }
+    
+    public static MultiTenantType match(String val, MultiTenantType def) {
+        return Stream.of(values()).parallel().filter((item) -> item.name().equalsIgnoreCase(val)).findAny().orElse(def);
+    }
+
+    public static MultiTenantType get(String val) {
+        return match(val, null);
+    }
+
 }
