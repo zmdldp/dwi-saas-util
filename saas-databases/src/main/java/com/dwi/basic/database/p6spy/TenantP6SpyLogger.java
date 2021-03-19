@@ -21,7 +21,7 @@ public class TenantP6SpyLogger implements MessageFormattingStrategy {
     @Override
     public String formatMessage(int connectionId, String now, long elapsed, String category,
                                 String prepared, String sql, String url) {
-    	log.info("ces:{}.", ContextUtil.getLocalMap());
+    	log.debug("当前租户:{}.", ContextUtil.getLocalMap());
         return StringUtils.isNotBlank(sql) ?
                 StrUtil.format(" tenant: {} userId: {} \n Consume Time：{} ms {} \n url: {} \n Execute SQL：{} \n",
                         ContextUtil.getTenant(), ContextUtil.getUserId(), elapsed, now, url, sql.replaceAll(REGX, StringPool.SPACE)) :

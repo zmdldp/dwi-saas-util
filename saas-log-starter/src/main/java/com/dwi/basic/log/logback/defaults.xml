@@ -27,6 +27,7 @@
     <springProperty scope="context" name="spring.profiles.active" source="spring.profiles.active"/>
     <!--    <springProperty scope="context" name="common-pattern" source="logging.common-pattern"-->
     <!--                    defaultValue="%d{yyyy-MM-dd HH:mm:ss.SSS}:[%5p] [%t:%r] [%logger{50}.%M:%L] &ndash;&gt; %msg%n"/>-->
+    <springProperty scope="context" name="log.level.root" source="logging.level.root" defaultValue="INFO"/>
     <springProperty scope="context" name="log.level.console" source="logging.level.console" defaultValue="INFO"/>
     <springProperty scope="context" name="log.level.controller" source="logging.level.controller" defaultValue="INFO"/>
     <springProperty scope="context" name="log.level.service" source="logging.level.service" defaultValue="INFO"/>
@@ -241,9 +242,9 @@
 
 
     <springProfile name="test,docker,prod">
-        <root level="${log.level.console}">
+        <root level="${log.level.root}">
+        	<appender-ref ref="ASYNC_CONSOLE_APPENDER"/>
             <appender-ref ref="ASYNC_ROOT_APPENDER"/>
-            <appender-ref ref="ASYNC_CONSOLE_APPENDER"/>
         </root>
         <logger name="com.dwi.basic" additivity="true" level="${log.level.console}">
             <appender-ref ref="ASYNC_PROJECT_APPENDER"/>
@@ -269,8 +270,8 @@
     </springProfile>
 
     <springProfile name="dev">
-        <root level="${log.level.console}">
-            <appender-ref ref="CONSOLE_APPENDER"/>
+        <root level="${log.level.root}">
+        	<appender-ref ref="CONSOLE_APPENDER"/>
             <appender-ref ref="ROOT_APPENDER"/>
         </root>
         <logger name="com.dwi.basic" additivity="true" level="${log.level.console}">

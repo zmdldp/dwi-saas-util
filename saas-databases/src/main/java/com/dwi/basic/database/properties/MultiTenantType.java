@@ -6,12 +6,11 @@ import java.util.stream.Stream;
 /**
  * 多租户类型
  * <p>
- * NONE、COLUMN、SCHEMA 模式开源
+ * NONE、COLUMN、SCHEMA、DATASOURCE 模式
  * <p>
- * DATASOURCE 模式收费，购买咨询作者
  *
  * @author dwi
- * @date 2018/11/20
+ * @date 2020/11/20
  */
 @Getter
 public enum MultiTenantType {

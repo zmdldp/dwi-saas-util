@@ -58,11 +58,9 @@ public class XssFilter implements Filter {
         // 判断uri是否包含项目名称
         String uriPath = ((HttpServletRequest) request).getRequestURI();
         if (isIgnorePath(uriPath)) {
-            log.debug("忽略过滤路径=[{}]", uriPath);
             chain.doFilter(request, response);
             return;
         }
-        log.debug("过滤器包装请求路径=[{}]", uriPath);
         chain.doFilter(new XssRequestWrapper((HttpServletRequest) request, ignoreParamValueList), response);
     }
 

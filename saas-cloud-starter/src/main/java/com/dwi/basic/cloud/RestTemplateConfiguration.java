@@ -112,7 +112,6 @@ public class RestTemplateConfiguration {
      */
     @Bean("lbRestTemplate")
     @LoadBalanced
-    @ConditionalOnMissingBean(RestTemplate.class)
     public RestTemplate lbRestTemplate(okhttp3.OkHttpClient httpClient, RestTemplateHeaderInterceptor interceptor) {
         RestTemplate lbRestTemplate = new RestTemplate(new OkHttp3ClientHttpRequestFactory(httpClient));
         lbRestTemplate.setInterceptors(Collections.singletonList(interceptor));
@@ -127,7 +126,6 @@ public class RestTemplateConfiguration {
      * @return RestTemplate
      */
     @Bean
-    @ConditionalOnMissingBean(RestTemplate.class)
     public RestTemplate restTemplate(okhttp3.OkHttpClient httpClient) {
         RestTemplate restTemplate = new RestTemplate(new OkHttp3ClientHttpRequestFactory(httpClient));
         this.configMessageConverters(restTemplate.getMessageConverters());
