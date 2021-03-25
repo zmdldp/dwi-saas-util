@@ -27,6 +27,8 @@
         <module>saas-cloud-starter</module>
         <module>saas-cache-starter</module>
         <module>saas-mq-starter</module>
+        <module>saas-msg-starter</module>
+        <module>saas-datasource-plugin</module>       
         <module>saas-zipkin-client-starter</module>
         <module>saas-injection-starter</module>
         <module>saas-uid</module>
