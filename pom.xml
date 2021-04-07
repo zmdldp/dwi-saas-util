@@ -17,6 +17,7 @@
         <module>saas-core</module>
         <module>saas-boot</module>
         <module>saas-databases</module>
+        <module>saas-postgis</module>
         <module>saas-log-starter</module>
         <module>saas-swagger2-starter</module>
         <module>saas-validator-starter</module>
@@ -121,6 +122,11 @@
             <dependency>
                 <groupId>com.dwi.basic</groupId>
                 <artifactId>saas-databases</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dwi.basic</groupId>
+                <artifactId>saas-postgis</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
