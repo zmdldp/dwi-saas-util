@@ -20,6 +20,7 @@ import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.annotation.SynthesizingMethodParameter;
+import org.springframework.core.env.Environment;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -78,6 +79,12 @@ public class UriSecurityPreAuthAspect implements ApplicationContextAware {
      * @param point 切点
      */
     private void handleAuth(ProceedingJoinPoint point) {
+        Environment env = ac.getEnvironment();
+        Boolean property = env.getProperty("saas.security.enabled", Boolean.class, false);
+        if (!property) {
+            log.debug("全局校验权限已经关闭");
+            return;
+        }
         MethodSignature ms = (MethodSignature) point.getSignature();
         Method method = ms.getMethod();
         // 读取权限注解，优先方法上，没有则读取类

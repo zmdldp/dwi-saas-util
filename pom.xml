@@ -31,7 +31,7 @@
         <module>saas-msg-starter</module>
         <module>saas-datasource-plugin</module>       
         <module>saas-zipkin-client-starter</module>
-        <module>saas-injection-starter</module>
+        <module>saas-echo-starter</module>
         <module>saas-uid</module>
     </modules>
     <properties>
@@ -116,7 +116,7 @@
             </dependency>
             <dependency>
                 <groupId>com.dwi.basic</groupId>
-                <artifactId>saas-injection-starter</artifactId>
+                <artifactId>saas-echo-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

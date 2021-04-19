@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * 缓存配置
  *
- * @author dwi
+ * @author d
  * @date 2019/08/06
  */
 @Data
@@ -22,13 +22,16 @@ public class CustomCacheProperties {
      */
     private CacheType type = CacheType.REDIS;
     /**
+     * 序列化类型
+     */
+    private SerializerType serializerType = SerializerType.ProtoStuff;
+    /**
      * 是否缓存 null 值
      */
     private Boolean cacheNullVal = true;
 
     /**
      * 通过 @Cacheable 注解标注的方法的缓存策略
-     *
      */
     private Cache def = new Cache();
     /**

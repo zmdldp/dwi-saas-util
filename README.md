@@ -26,7 +26,7 @@
     - 自定义pom, 管理所有项目依赖版本
 - saas-dozer-starter
     - bean转换配置
-- saas-injection-starter
+- saas-echo-starter
     - 远程数据自动注入
 - saas-jwt-starter
     - Jwt自动生成
@@ -54,7 +54,7 @@
 ## saas-util 功能
 - Mvc封装： 通用的 Controller、Service、Mapper、全局异常、全局序列化、反序列化规则
 - SpringCloud封装：请求头传递、调用日志、灰度、统一配置编码解码规则等
-- 关联数据注入：优雅解决 跨库表关联字段回显、跨服务字段回显
+- 数据回显：优雅解决 跨库表关联字段回显、跨服务字段回显
 - 持久层增强：增强MybatisPlus Wrapper操作类、数据权限、自定义类型处理器
 - 枚举、字典等字段统一传参、回显格式： 解决前端即要使用编码，有要回显中文名的场景。
 - 在线文档：对swagger、knife4j二次封装，实现配置即文档。

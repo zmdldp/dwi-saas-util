@@ -80,8 +80,8 @@ public class PageParams<T> {
             if (!StrUtil.equalsAny(humpSort, SuperEntity.CREATE_TIME, Entity.UPDATE_TIME)) {
                 underlineSort = AntiSqlFilterUtils.getSafeValue(underlineSort);
             }
-
-            orders.add("ascending".equals(orderArr[i]) ? OrderItem.asc(underlineSort) : OrderItem.desc(underlineSort));
+            // 排序支持antd
+            orders.add(StrUtil.equalsAny(orderArr[i], "ascending", "ascend") ? OrderItem.asc(underlineSort) : OrderItem.desc(underlineSort));
         }
 
         page.setOrders(orders);

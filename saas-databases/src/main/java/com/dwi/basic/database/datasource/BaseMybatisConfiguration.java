@@ -27,6 +27,7 @@ import com.dwi.basic.database.mybatis.typehandler.RightLikeTypeHandler;
 import com.dwi.basic.database.plugins.SchemaInterceptor;
 import com.dwi.basic.database.properties.DatabaseProperties;
 import com.dwi.basic.database.properties.MultiTenantType;
+import com.dwi.basic.uid.dao.WorkerNodeDao;
 import com.dwi.basic.uid.service.DisposableWorkerIdAssigner;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.Expression;
@@ -195,8 +196,8 @@ public abstract class BaseMybatisConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnExpression("'DEFAULT'.equals('${saas.database.id-type:DEFAULT}') || 'CACHE'.equals('${saas.database.id-type:DEFAULT}')")
-    public DisposableWorkerIdAssigner disposableWorkerIdAssigner() {
-        return new DisposableWorkerIdAssigner();
+    public DisposableWorkerIdAssigner disposableWorkerIdAssigner(WorkerNodeDao workerNodeDao) {
+        return new DisposableWorkerIdAssigner(workerNodeDao);
     }
 
     @Bean

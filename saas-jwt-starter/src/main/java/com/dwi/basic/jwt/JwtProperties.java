@@ -34,6 +34,6 @@ public class JwtProperties {
      * 使用场景1：多台服务器集群部署时，服务器时间戳可能不一致
      * 使用场景2：？
      */
-    private Long allowedClockSkewSeconds = 0L;
+    private Long allowedClockSkewSeconds = 60L;
 
 }

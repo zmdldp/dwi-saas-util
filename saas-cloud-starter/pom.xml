@@ -44,21 +44,13 @@
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
 
-        <dependency>
+       <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-common</artifactId>
+                    <artifactId>nacos-client</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -69,31 +61,14 @@
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-common</artifactId>
+                    <artifactId>nacos-client</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
-            <artifactId>nacos-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-client</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.alibaba.nacos</groupId>
-            <artifactId>nacos-common</artifactId>
-        </dependency>
-
 
         <!-- 必须有这个jar 才能提示 -->
         <dependency>

@@ -1,8 +1,10 @@
 package com.dwi.basic.cache.redis;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import com.dwi.basic.cache.model.CacheHashKey;
 import com.dwi.basic.cache.model.CacheKey;
+import com.dwi.basic.utils.BizAssert;
 import com.dwi.basic.utils.CollHelper;
 import lombok.Getter;
 import org.springframework.data.redis.connection.DataType;
@@ -11,11 +13,11 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -43,7 +45,7 @@ import java.util.stream.Collectors;
  * <p>
  * https://blog.csdn.net/haoxin963/article/details/83245113
  *
- * @author zuihou
+ * @author dwi
  */
 @Getter
 @SuppressWarnings({"unused", "SpellCheckingInspection", "unchecked"})
@@ -59,20 +61,28 @@ public class RedisOps {
     private final ListOperations<String, Object> listOps;
     private final SetOperations<String, Object> setOps;
     private final ZSetOperations<String, Object> zSetOps;
+    private final StringRedisTemplate stringRedisTemplate;
     /**
      * 全局配置是否缓存null值
      */
     private final boolean defaultCacheNullVal;
 
-    public RedisOps(RedisTemplate<String, Object> redisTemplate, boolean defaultCacheNullVal) {
+    public RedisOps(RedisTemplate<String, Object> redisTemplate, StringRedisTemplate stringRedisTemplate, boolean defaultCacheNullVal) {
         this.redisTemplate = redisTemplate;
-        Assert.notNull(redisTemplate, "redisTemplate 为空");
+        BizAssert.notNull(redisTemplate, "redisTemplate 为空");
         valueOps = redisTemplate.opsForValue();
         hashOps = redisTemplate.opsForHash();
         listOps = redisTemplate.opsForList();
         setOps = redisTemplate.opsForSet();
         zSetOps = redisTemplate.opsForZSet();
+        this.stringRedisTemplate = stringRedisTemplate;
         this.defaultCacheNullVal = defaultCacheNullVal;
+    }
+
+    private void setExpire(CacheKey key) {
+        if (key != null && key.getExpire() != null) {
+            redisTemplate.expire(key.getKey(), key.getExpire());
+        }
     }
 
     /**
@@ -130,7 +140,7 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/del">Redis Documentation: DEL</a>
      */
     public Long del(@NonNull String... keys) {
-        return del(Arrays.asList(keys));
+        return redisTemplate.delete(Arrays.stream(keys).collect(Collectors.toList()));
     }
 
     /**
@@ -141,8 +151,8 @@ public class RedisOps {
      * @return key 被删除返回true
      * @see <a href="https://redis.io/commands/del">Redis Documentation: DEL</a>
      */
-    public Long del(@NonNull Collection<String> keys) {
-        return redisTemplate.delete(keys);
+    public Long del(@NonNull Collection<CacheKey> keys) {
+        return redisTemplate.delete(keys.stream().map(CacheKey::getKey).collect(Collectors.toList()));
     }
 
     /**
@@ -245,7 +255,7 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/expire">Redis Documentation: EXPIRE</a>
      */
     public Boolean expire(@NonNull String key, long seconds) {
-        Assert.hasText(key, KEY_NOT_NULL);
+        BizAssert.notEmpty(key, KEY_NOT_NULL);
         return redisTemplate.expire(key, seconds, TimeUnit.SECONDS);
     }
 
@@ -368,7 +378,7 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/set">Redis Documentation: SET</a>
      */
     public void set(@NonNull String key, Object value, boolean... cacheNullValues) {
-        Assert.notNull(key, KEY_NOT_NULL);
+        BizAssert.notNull(key, KEY_NOT_NULL);
         boolean cacheNullVal = cacheNullValues.length > 0 ? cacheNullValues[0] : defaultCacheNullVal;
         if (!cacheNullVal && value == null) {
             return;
@@ -386,7 +396,7 @@ public class RedisOps {
      */
     public void set(@NonNull CacheKey cacheKey, Object value, boolean... cacheNullValues) {
         boolean cacheNullVal = cacheNullValues.length > 0 ? cacheNullValues[0] : defaultCacheNullVal;
-        Assert.notNull(cacheKey, CACHE_KEY_NOT_NULL);
+        BizAssert.notNull(cacheKey, CACHE_KEY_NOT_NULL);
         String key = cacheKey.getKey();
         Duration expire = cacheKey.getExpire();
         if (expire == null) {
@@ -414,7 +424,7 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/setex">Redis Documentation: SETEX</a>
      */
     public void setEx(@NonNull String key, Object value, Duration timeout, boolean... cacheNullValues) {
-        Assert.notNull(key, KEY_NOT_NULL);
+        BizAssert.notNull(key, KEY_NOT_NULL);
         boolean cacheNullVal = cacheNullValues.length > 0 ? cacheNullValues[0] : defaultCacheNullVal;
         if (!cacheNullVal && value == null) {
             return;
@@ -580,7 +590,7 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/getset">Redis Documentation: GETSET</a>
      */
     public <T> T getSet(@NonNull String key, Object value) {
-        Assert.notNull(key, CACHE_KEY_NOT_NULL);
+        BizAssert.notNull(key, CACHE_KEY_NOT_NULL);
         T val = (T) valueOps.getAndSet(key, value == null ? newNullVal() : value);
         return returnVal(val);
     }
@@ -598,8 +608,8 @@ public class RedisOps {
     @Nullable
     public <T> T get(@NonNull CacheKey key, boolean... cacheNullValues) {
         boolean cacheNullVal = cacheNullValues.length > 0 ? cacheNullValues[0] : defaultCacheNullVal;
-        Assert.notNull(key, CACHE_KEY_NOT_NULL);
-        Assert.notNull(key.getKey(), KEY_NOT_NULL);
+        BizAssert.notNull(key, CACHE_KEY_NOT_NULL);
+        BizAssert.notNull(key.getKey(), KEY_NOT_NULL);
         T value = (T) valueOps.get(key.getKey());
         if (value == null && cacheNullVal) {
             set(key, newNullVal(), true);
@@ -621,8 +631,8 @@ public class RedisOps {
      */
     @Nullable
     public <T> T get(@NonNull CacheKey key, Function<CacheKey, T> loader, boolean... cacheNullValues) {
-        Assert.notNull(key, CACHE_KEY_NOT_NULL);
-        Assert.notNull(key.getKey(), KEY_NOT_NULL);
+        BizAssert.notNull(key, CACHE_KEY_NOT_NULL);
+        BizAssert.notNull(key.getKey(), KEY_NOT_NULL);
         boolean cacheNullVal = cacheNullValues.length > 0 ? cacheNullValues[0] : defaultCacheNullVal;
         T value = (T) valueOps.get(key.getKey());
 
@@ -706,7 +716,7 @@ public class RedisOps {
     }
 
     private Map<String, Object> mSetMap(@NonNull Map<String, Object> map, boolean cacheNullVal) {
-        Map<String, Object> mSetMap = new HashMap<>((CollHelper.initialCapacity(map.size())));
+        Map<String, Object> mSetMap = new HashMap<>(CollHelper.initialCapacity(map.size()));
         map.forEach((k, v) -> {
             if (v == null && cacheNullVal) {
                 mSetMap.put(k, newNullVal());
@@ -835,8 +845,10 @@ public class RedisOps {
      * @return 返回键 key 在执行加一操作之后的值。
      * @see <a href="https://redis.io/commands/incr">Redis Documentation: INCR</a>
      */
-    public Long incr(@NonNull String key) {
-        return valueOps.increment(key);
+    public Long incr(@NonNull CacheKey key) {
+        Long increment = stringRedisTemplate.opsForValue().increment(key.getKey());
+        setExpire(key);
+        return increment;
     }
 
     /**
@@ -851,8 +863,10 @@ public class RedisOps {
      * @return 返回键 key 在执行加上 increment ，操作之后的值。
      * @see <a href="https://redis.io/commands/incrby">Redis Documentation: INCRBY</a>
      */
-    public Long incrBy(@NonNull String key, long increment) {
-        return valueOps.increment(key, increment);
+    public Long incrBy(@NonNull CacheKey key, long increment) {
+        Long incrBy = stringRedisTemplate.opsForValue().increment(key.getKey(), increment);
+        setExpire(key);
+        return incrBy;
     }
 
     /**
@@ -872,8 +886,10 @@ public class RedisOps {
      * @return 在加上增量 increment 之后， 键 key 的值。
      * @see <a href="https://redis.io/commands/incrbyfloat">Redis Documentation: INCRBYFLOAT</a>
      */
-    public Double incrByFloat(@NonNull String key, double increment) {
-        return valueOps.increment(key, increment);
+    public Double incrByFloat(@NonNull CacheKey key, double increment) {
+        Double incrByFloat = stringRedisTemplate.opsForValue().increment(key.getKey(), increment);
+        setExpire(key);
+        return incrByFloat;
     }
 
     /**
@@ -882,10 +898,24 @@ public class RedisOps {
      * @param key 一定不能为 {@literal null}.
      * @return key中存储的的数字
      */
-    public Long getCounter(@NonNull String key, Long... defaultValue) {
-        Object val = valueOps.get(key);
+    public Long getCounter(@NonNull CacheKey key, Long... defaultValue) {
+        Object val = stringRedisTemplate.opsForValue().get(key.getKey());
         if (isNullVal(val)) {
-            return defaultValue.length > 0 ? Convert.toLong(defaultValue[0]) : null;
+            return defaultValue.length > 0 ? defaultValue[0] : null;
+        }
+        return Convert.toLong(val);
+    }
+
+    /**
+     * 获取key中存放的Long值
+     *
+     * @param key 一定不能为 {@literal null}.
+     * @return key中存储的的数字
+     */
+    public Long getCounter(@NonNull CacheKey key, Function<CacheKey, Long> loader) {
+        Object val = stringRedisTemplate.opsForValue().get(key.getKey());
+        if (isNullVal(val)) {
+            return loader.apply(key);
         }
         return Convert.toLong(val);
     }
@@ -900,8 +930,10 @@ public class RedisOps {
      * @return 在减去增量 1 之后， 键 key 的值。
      * @see <a href="https://redis.io/commands/decr">Redis Documentation: DECR</a>
      */
-    public Long decr(@NonNull String key) {
-        return valueOps.decrement(key);
+    public Long decr(@NonNull CacheKey key) {
+        Long decr = stringRedisTemplate.opsForValue().decrement(key.getKey());
+        setExpire(key);
+        return decr;
     }
 
     /**
@@ -914,8 +946,10 @@ public class RedisOps {
      * @return 在减去增量 decrement 之后， 键 key 的值。
      * @see <a href="https://redis.io/commands/decr">Redis Documentation: DECR</a>
      */
-    public Long decrBy(@NonNull String key, long decrement) {
-        return valueOps.decrement(key, decrement);
+    public Long decrBy(@NonNull CacheKey key, long decrement) {
+        Long decr = stringRedisTemplate.opsForValue().decrement(key.getKey(), decrement);
+        setExpire(key);
+        return decr;
     }
     // ---------------------------- string end ----------------------------
 
@@ -933,8 +967,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/hset">Redis Documentation: HSET</a>
      */
     public void hSet(@NonNull String key, @NonNull Object field, Object value, boolean... cacheNullValues) {
-        Assert.hasText(key, KEY_NOT_NULL);
-        Assert.notNull(field, "field不能为空");
+        BizAssert.notEmpty(key, KEY_NOT_NULL);
+        BizAssert.notNull(field, "field不能为空");
         boolean cacheNullVal = cacheNullValues.length > 0 ? cacheNullValues[0] : defaultCacheNullVal;
 
         if (!cacheNullVal && value == null) {
@@ -948,18 +982,16 @@ public class RedisOps {
      * 如果 key 不存在，一个新的哈希表被创建并进行 HSET 操作。
      * 如果域 field 已经存在于哈希表中，旧值将被覆盖。
      *
-     * @param cacheHashKey    一定不能为 {@literal null}.
+     * @param key             一定不能为 {@literal null}.
      * @param value           值
      * @param cacheNullValues 是否缓存空对象
      * @see <a href="https://redis.io/commands/hset">Redis Documentation: HSET</a>
      */
-    public void hSet(@NonNull CacheHashKey cacheHashKey, Object value, boolean... cacheNullValues) {
-        Assert.notNull(cacheHashKey, "CacheHashKey不能为空");
+    public void hSet(@NonNull CacheHashKey key, Object value, boolean... cacheNullValues) {
+        BizAssert.notNull(key, "CacheHashKey不能为空");
 
-        this.hSet(cacheHashKey.getKey(), cacheHashKey.getField(), value, cacheNullValues);
-        if (cacheHashKey.getExpire() != null) {
-            this.expire(cacheHashKey.getKey(), cacheHashKey.getExpire());
-        }
+        this.hSet(key.getKey(), key.getField(), value, cacheNullValues);
+        setExpire(key);
     }
 
 
@@ -1028,9 +1060,9 @@ public class RedisOps {
     @Nullable
     public <T> T hGet(@NonNull CacheHashKey key, boolean... cacheNullValues) {
         boolean cacheNullVal = cacheNullValues.length > 0 ? cacheNullValues[0] : defaultCacheNullVal;
-        Assert.notNull(key, "CacheHashKey不能为空");
-        Assert.hasText(key.getKey(), KEY_NOT_NULL);
-        Assert.notNull(key.getField(), "field不能为空");
+        BizAssert.notNull(key, "CacheHashKey不能为空");
+        BizAssert.notEmpty(key.getKey(), KEY_NOT_NULL);
+        BizAssert.notNull(key.getField(), "field不能为空");
 
         T value = (T) hashOps.get(key.getKey(), key.getField());
         if (value == null && cacheNullVal) {
@@ -1107,6 +1139,10 @@ public class RedisOps {
         return hashOps.delete(key, fields);
     }
 
+    public Long hDel(@NonNull CacheHashKey key) {
+        return hashOps.delete(key.getKey(), key.getField());
+    }
+
 
     /**
      * 返回哈希表 key 中域的数量。
@@ -1140,13 +1176,16 @@ public class RedisOps {
      * 本操作的值被限制在 64 位(bit)有符号数字表示之内。
      *
      * @param key       一定不能为 {@literal null}.
-     * @param field     一定不能为 {@literal null}.
      * @param increment 增量
      * @return 执行 HINCRBY 命令之后，哈希表 key 中域 field 的值
      * @see <a href="https://redis.io/commands/hincrby">Redis Documentation: HINCRBY</a>
      */
-    public Long hIncrBy(@NonNull String key, @NonNull Object field, long increment) {
-        return hashOps.increment(key, field, increment);
+    public Long hIncrBy(@NonNull CacheHashKey key, long increment) {
+        Long hIncrBy = stringRedisTemplate.opsForHash().increment(key.getKey(), key.getField(), increment);
+        if (key.getExpire() != null) {
+            stringRedisTemplate.expire(key.getKey(), key.getExpire());
+        }
+        return hIncrBy;
     }
 
     /**
@@ -1159,13 +1198,16 @@ public class RedisOps {
      * HINCRBYFLOAT 命令的详细功能和 INCRBYFLOAT 命令类似，请查看 INCRBYFLOAT 命令获取更多相关信息。
      *
      * @param key       一定不能为 {@literal null}.
-     * @param field     一定不能为 {@literal null}.
      * @param increment 增量
      * @return 执行 HINCRBY 命令之后，哈希表 key 中域 field 的值
      * @see <a href="https://redis.io/commands/hincrbyfloat">Redis Documentation: HINCRBYFLOAT</a>
      */
-    public Double hIncrByFloat(@NonNull String key, @NonNull Object field, double increment) {
-        return hashOps.increment(key, field, increment);
+    public Double hIncrByFloat(@NonNull CacheHashKey key, double increment) {
+        Double hIncrBy = stringRedisTemplate.opsForHash().increment(key.getKey(), key.getField(), increment);
+        if (key.getExpire() != null) {
+            stringRedisTemplate.expire(key.getKey(), key.getExpire());
+        }
+        return hIncrBy;
     }
 
     /**
@@ -1178,7 +1220,7 @@ public class RedisOps {
      * @param cacheNullValues 是否缓存空值
      * @see <a href="https://redis.io/commands/hmset">Redis Documentation: hmset</a>
      */
-    public void hmSet(@NonNull String key, @NonNull Map<Object, Object> hash, boolean... cacheNullValues) {
+    public <K, V> void hmSet(@NonNull String key, @NonNull Map<K, V> hash, boolean... cacheNullValues) {
         boolean cacheNullVal = cacheNullValues.length > 0 ? cacheNullValues[0] : defaultCacheNullVal;
         Map<Object, Object> newMap = new HashMap<>(CollHelper.initialCapacity(hash.size()));
 
@@ -1227,8 +1269,8 @@ public class RedisOps {
      * @return 所有的 filed
      * @see <a href="https://redis.io/commands/hkeys">Redis Documentation: hkeys</a>
      */
-    public Set<Object> hKeys(@NonNull String key) {
-        return hashOps.keys(key);
+    public <HK> Set<HK> hKeys(@NonNull String key) {
+        return (Set<HK>) hashOps.keys(key);
     }
 
 
@@ -1239,8 +1281,8 @@ public class RedisOps {
      * @return 一个包含哈希表中所有值的表。
      * @see <a href="https://redis.io/commands/hvals">Redis Documentation: hvals</a>
      */
-    public List<Object> hVals(@NonNull String key) {
-        return hashOps.values(key);
+    public <HV> List<HV> hVals(@NonNull String key) {
+        return (List<HV>) hashOps.values(key);
     }
 
 
@@ -1252,10 +1294,59 @@ public class RedisOps {
      * @return 以列表形式返回哈希表的域和域的值
      * @see <a href="https://redis.io/commands/hgetall">Redis Documentation: hgetall</a>
      */
-    public Map<Object, Object> hGetAll(@NonNull String key) {
-        return hashOps.entries(key);
+    public <K, V> Map<K, V> hGetAll(@NonNull String key) {
+        Map<K, V> map = (Map<K, V>) hashOps.entries(key);
+        return returnMapVal(map);
     }
 
+    public <K, V> Map<K, V> hGetAll(@NonNull CacheHashKey key) {
+        Map<K, V> map = (Map<K, V>) hashOps.entries(key.getKey());
+        return returnMapVal(map);
+    }
+
+    private <K, V> Map<K, V> returnMapVal(Map<K, V> map) {
+        Map<K, V> newMap = new HashMap<>(CollHelper.initialCapacity(map.size()));
+        if (CollUtil.isNotEmpty(map)) {
+            map.forEach((k, v) -> {
+                if (!isNullVal(v)) {
+                    newMap.put(k, v);
+                }
+            });
+        }
+        return newMap;
+    }
+
+    /**
+     * 返回哈希表 key 中给定域 field 的值。
+     *
+     * @param key             一定不能为 {@literal null}.
+     * @param cacheNullValues 是否缓存空值
+     * @param loader          加载器
+     * @return 默认情况下返回给定域的值, 如果给定域不存在于哈希表中， 又或者给定的哈希表并不存在， 那么命令返回 nil
+     * @see <a href="https://redis.io/commands/hget">Redis Documentation: HGET</a>
+     */
+    @Nullable
+    public <K, V> Map<K, V> hGetAll(@NonNull CacheHashKey key, Function<CacheHashKey, Map<K, V>> loader, boolean... cacheNullValues) {
+        boolean cacheNullVal = cacheNullValues.length > 0 ? cacheNullValues[0] : defaultCacheNullVal;
+        Map<K, V> map = (Map<K, V>) hashOps.entries(key.getKey());
+        if (CollUtil.isNotEmpty(map)) {
+            return returnMapVal(map);
+        }
+        String lockKey = key.getKey();
+        synchronized (KEY_LOCKS.computeIfAbsent(lockKey, v -> new Object())) {
+            map = (Map<K, V>) hashOps.entries(key.getKey());
+            if (CollUtil.isNotEmpty(map)) {
+                return returnMapVal(map);
+            }
+            try {
+                map = loader.apply(key);
+                this.hmSet(key.getKey(), map, cacheNullVal);
+            } finally {
+                KEY_LOCKS.remove(key.getKey());
+            }
+        }
+        return returnMapVal(map);
+    }
     // ---------------------------- hash end ----------------------------
 
     // ---------------------------- list start ----------------------------
@@ -1552,8 +1643,10 @@ public class RedisOps {
      * @return 被添加到集合中的新元素的数量，不包括被忽略的元素。
      * @see <a href="https://redis.io/commands/sadd">Redis Documentation: SADD</a>
      */
-    public Long sAdd(@NonNull String key, Object... members) {
-        return setOps.add(key, members);
+    public <V> Long sAdd(@NonNull CacheKey key, V... members) {
+        Long count = setOps.add(key.getKey(), members);
+        setExpire(key);
+        return count;
     }
 
     /**
@@ -1566,8 +1659,10 @@ public class RedisOps {
      * @return 被添加到集合中的新元素的数量，不包括被忽略的元素。
      * @see <a href="https://redis.io/commands/sadd">Redis Documentation: SADD</a>
      */
-    public Long sAdd(@NonNull String key, Collection<Object> members) {
-        return setOps.add(key, members.toArray());
+    public <V> Long sAdd(@NonNull CacheKey key, Collection<V> members) {
+        Long count = setOps.add(key.getKey(), members.toArray());
+        setExpire(key);
+        return count;
     }
 
     /**
@@ -1578,8 +1673,8 @@ public class RedisOps {
      * @return 如果 member 元素是集合的成员，返回 1 。 如果 member 元素不是集合的成员，或 key 不存在，返回 0 。
      * @see <a href="https://redis.io/commands/sismember">Redis Documentation: SISMEMBER</a>
      */
-    public Boolean sIsMember(@NonNull String key, Object member) {
-        return setOps.isMember(key, member);
+    public Boolean sIsMember(@NonNull CacheKey key, Object member) {
+        return setOps.isMember(key.getKey(), member);
     }
 
     /**
@@ -1591,8 +1686,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/spop">Redis Documentation: SPOP</a>
      */
     @Nullable
-    public <T> T sPop(@NonNull String key) {
-        return (T) setOps.pop(key);
+    public <T> T sPop(@NonNull CacheKey key) {
+        return (T) setOps.pop(key.getKey());
     }
 
     /**
@@ -1603,8 +1698,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/srandmember">Redis Documentation: SRANDMEMBER</a>
      */
     @Nullable
-    public <T> T sRandMember(@NonNull String key) {
-        return (T) setOps.randomMember(key);
+    public <T> T sRandMember(@NonNull CacheKey key) {
+        return (T) setOps.randomMember(key.getKey());
     }
 
     /**
@@ -1619,8 +1714,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/srandmember">Redis Documentation: SRANDMEMBER</a>
      */
     @Nullable
-    public Set<Object> sRandMember(@NonNull String key, long count) {
-        return setOps.distinctRandomMembers(key, count);
+    public <V> Set<V> sRandMember(@NonNull CacheKey key, long count) {
+        return (Set<V>) setOps.distinctRandomMembers(key.getKey(), count);
     }
 
 
@@ -1636,8 +1731,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/srandmember">Redis Documentation: SRANDMEMBER</a>
      */
     @Nullable
-    public List<Object> sRandMembers(@NonNull String key, long count) {
-        return setOps.randomMembers(key, count);
+    public <V> List<V> sRandMembers(@NonNull CacheKey key, long count) {
+        return (List<V>) setOps.randomMembers(key.getKey(), count);
     }
 
     /**
@@ -1650,8 +1745,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/srem">Redis Documentation: SREM</a>
      */
     @Nullable
-    public Long sRem(@NonNull String key, Object... members) {
-        return setOps.remove(key, members);
+    public Long sRem(@NonNull CacheKey key, Object... members) {
+        return setOps.remove(key.getKey(), members);
     }
 
     /**
@@ -1667,8 +1762,8 @@ public class RedisOps {
      * @return 是否成功
      * @see <a href="https://redis.io/commands/smove">Redis Documentation: SMOVE</a>
      */
-    public Boolean sMove(@NonNull String sourceKey, String destinationKey, Object value) {
-        return setOps.move(sourceKey, value, destinationKey);
+    public <V> Boolean sMove(@NonNull CacheKey sourceKey, CacheKey destinationKey, V value) {
+        return setOps.move(sourceKey.getKey(), value, destinationKey.getKey());
     }
 
     /**
@@ -1678,8 +1773,8 @@ public class RedisOps {
      * @return 集合的基数。 当 key 不存在时，返回 0 。
      * @see <a href="https://redis.io/commands/scard">Redis Documentation: SCARD</a>
      */
-    public Long sCard(@NonNull String key) {
-        return setOps.size(key);
+    public Long sCard(@NonNull CacheKey key) {
+        return setOps.size(key.getKey());
     }
 
     /**
@@ -1691,8 +1786,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/smembers">Redis Documentation: SMEMBERS</a>
      */
     @Nullable
-    public Set<Object> sMembers(@NonNull String key) {
-        return setOps.members(key);
+    public <V> Set<V> sMembers(@NonNull CacheKey key) {
+        return (Set<V>) setOps.members(key.getKey());
     }
 
 
@@ -1709,8 +1804,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/sinter">Redis Documentation: SINTER</a>
      */
     @Nullable
-    public Set<Object> sInter(@NonNull String key, @NonNull String otherKey) {
-        return setOps.intersect(key, otherKey);
+    public <V> Set<V> sInter(@NonNull CacheKey key, @NonNull CacheKey otherKey) {
+        return (Set<V>) setOps.intersect(key.getKey(), otherKey.getKey());
     }
 
     /**
@@ -1726,8 +1821,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/sinter">Redis Documentation: SINTER</a>
      */
     @Nullable
-    public Set<Object> sInter(@NonNull String key, Collection<String> otherKeys) {
-        return setOps.intersect(key, otherKeys);
+    public Set<Object> sInter(@NonNull CacheKey key, Collection<CacheKey> otherKeys) {
+        return setOps.intersect(key.getKey(), otherKeys.stream().map(CacheKey::getKey).collect(Collectors.toList()));
     }
 
     /**
@@ -1742,8 +1837,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/sinter">Redis Documentation: SINTER</a>
      */
     @Nullable
-    public Set<Object> sInter(Collection<String> otherKeys) {
-        return setOps.intersect(otherKeys);
+    public <V> Set<V> sInter(Collection<CacheKey> otherKeys) {
+        return (Set<V>) setOps.intersect(otherKeys.stream().map(CacheKey::getKey).collect(Collectors.toList()));
     }
 
 
@@ -1759,8 +1854,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/sinterstore">Redis Documentation: SINTERSTORE</a>
      */
     @Nullable
-    public Long sInterStore(@NonNull String key, @NonNull String otherKey, @NonNull String destKey) {
-        return setOps.intersectAndStore(key, otherKey, destKey);
+    public Long sInterStore(@NonNull CacheKey key, @NonNull CacheKey otherKey, @NonNull CacheKey destKey) {
+        return setOps.intersectAndStore(key.getKey(), otherKey.getKey(), destKey.getKey());
     }
 
     /**
@@ -1775,8 +1870,9 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/sinterstore">Redis Documentation: SINTERSTORE</a>
      */
     @Nullable
-    public Long sInterStore(@NonNull String key, Collection<String> otherKeys, @NonNull String destKey) {
-        return setOps.intersectAndStore(key, otherKeys, destKey);
+    public Long sInterStore(@NonNull CacheKey key, @NonNull Collection<CacheKey> otherKeys, @NonNull CacheKey destKey) {
+        return setOps.intersectAndStore(key.getKey(),
+                otherKeys.stream().map(CacheKey::getKey).collect(Collectors.toList()), destKey.getKey());
     }
 
     /**
@@ -1790,8 +1886,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/sinterstore">Redis Documentation: SINTERSTORE</a>
      */
     @Nullable
-    public Long sInterStore(Collection<String> otherKeys, @NonNull String destKey) {
-        return setOps.intersectAndStore(otherKeys, destKey);
+    public Long sInterStore(Collection<CacheKey> otherKeys, @NonNull CacheKey destKey) {
+        return setOps.intersectAndStore(otherKeys.stream().map(CacheKey::getKey).collect(Collectors.toList()), destKey.getKey());
     }
 
 
@@ -1805,8 +1901,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/sunion">Redis Documentation: SUNION</a>
      */
     @Nullable
-    public Set<Object> sUnion(@NonNull String key, @NonNull String otherKey) {
-        return setOps.union(key, otherKey);
+    public <V> Set<V> sUnion(@NonNull CacheKey key, @NonNull CacheKey otherKey) {
+        return (Set<V>) setOps.union(key.getKey(), otherKey.getKey());
     }
 
     /**
@@ -1819,8 +1915,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/sunion">Redis Documentation: SUNION</a>
      */
     @Nullable
-    public Set<Object> sUnion(@NonNull String key, Collection<String> otherKeys) {
-        return setOps.union(key, otherKeys);
+    public <V> Set<V> sUnion(@NonNull CacheKey key, Collection<CacheKey> otherKeys) {
+        return (Set<V>) setOps.union(key.getKey(), otherKeys.stream().map(CacheKey::getKey).collect(Collectors.toList()));
     }
 
     /**
@@ -1832,8 +1928,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/sunion">Redis Documentation: SUNION</a>
      */
     @Nullable
-    public Set<Object> sUnion(Collection<String> otherKeys) {
-        return setOps.union(otherKeys);
+    public <V> Set<V> sUnion(Collection<CacheKey> otherKeys) {
+        return (Set<V>) setOps.union(otherKeys.stream().map(CacheKey::getKey).collect(Collectors.toList()));
     }
 
     /**
@@ -1847,8 +1943,8 @@ public class RedisOps {
      * @return {@literal null} when used in pipeline / transaction.
      * @see <a href="https://redis.io/commands/sunionstore">Redis Documentation: SUNIONSTORE</a>
      */
-    public Long sUnionStore(@NonNull String key, @NonNull String otherKey, @NonNull String distKey) {
-        return setOps.unionAndStore(key, otherKey, distKey);
+    public Long sUnionStore(@NonNull CacheKey key, @NonNull CacheKey otherKey, @NonNull CacheKey distKey) {
+        return setOps.unionAndStore(key.getKey(), otherKey.getKey(), distKey.getKey());
     }
 
     /**
@@ -1861,8 +1957,8 @@ public class RedisOps {
      * @return {@literal null} when used in pipeline / transaction.
      * @see <a href="https://redis.io/commands/sunionstore">Redis Documentation: SUNIONSTORE</a>
      */
-    public Long sUnionStore(Collection<String> otherKeys, @NonNull String distKey) {
-        return setOps.unionAndStore(otherKeys, distKey);
+    public Long sUnionStore(Collection<CacheKey> otherKeys, @NonNull CacheKey distKey) {
+        return setOps.unionAndStore(otherKeys.stream().map(CacheKey::getKey).collect(Collectors.toList()), distKey.getKey());
     }
 
     /**
@@ -1875,8 +1971,8 @@ public class RedisOps {
      * @see <a href="https://redis.io/commands/sdiff">Redis Documentation: SDIFF</a>
      */
     @Nullable
-    public Set<Object> sDiff(@NonNull String key, @NonNull String otherKey) {
-        return setOps.difference(key, otherKey);
+    public <V> Set<V> sDiff(@NonNull CacheKey key, @NonNull CacheKey otherKey) {
+        return (Set<V>) setOps.difference(key.getKey(), otherKey.getKey());
     }
 
     /**
@@ -1887,8 +1983,8 @@ public class RedisOps {
      * @return 一个包含差集成员的列表。
      * @see <a href="https://redis.io/commands/sdiff">Redis Documentation: SDIFF</a>
      */
-    public Set<Object> sDiff(Collection<String> otherKeys) {
-        return setOps.difference(otherKeys);
+    public <V> Set<V> sDiff(Collection<CacheKey> otherKeys) {
+        return (Set<V>) setOps.difference(otherKeys.stream().map(CacheKey::getKey).collect(Collectors.toList()));
     }
 
     /**
@@ -1902,8 +1998,8 @@ public class RedisOps {
      * @return 结果集中的元素数量。。
      * @see <a href="https://redis.io/commands/sdiffstore">Redis Documentation: sdiffstore</a>
      */
-    public Long sDiffStore(@NonNull String key, @NonNull String otherKey, @NonNull String distKey) {
-        return setOps.differenceAndStore(key, otherKey, distKey);
+    public Long sDiffStore(@NonNull CacheKey key, @NonNull CacheKey otherKey, @NonNull CacheKey distKey) {
+        return setOps.differenceAndStore(key.getKey(), otherKey.getKey(), distKey.getKey());
     }
 
     /**
@@ -1914,8 +2010,9 @@ public class RedisOps {
      * @return 结果集中的元素数量。
      * @see <a href="https://redis.io/commands/sdiffstore">Redis Documentation: sdiffstore</a>
      */
-    public Long sDiffStore(Collection<String> otherKeys, @NonNull String distKey) {
-        return setOps.differenceAndStore(otherKeys, distKey);
+    public Long sDiffStore(Collection<CacheKey> otherKeys, @NonNull CacheKey distKey) {
+        return setOps.differenceAndStore(otherKeys.stream().map(CacheKey::getKey).collect(Collectors.toList()),
+                distKey.getKey());
     }
 
 
@@ -2216,5 +2313,4 @@ public class RedisOps {
     public Long zRemRangeByScore(@NonNull String key, double min, double max) {
         return zSetOps.removeRangeByScore(key, min, max);
     }
-
 }

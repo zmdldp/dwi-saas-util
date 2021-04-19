@@ -15,9 +15,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 import static com.baomidou.mybatisplus.annotation.SqlCondition.LIKE;
@@ -48,7 +49,7 @@ public class DatasourceConfig extends Entity<Long> {
      */
     @ApiModelProperty(value = "名称")
     @NotEmpty(message = "名称不能为空")
-    @Length(max = 255, message = "名称长度不能超过255")
+    @Size(max = 255, message = "名称长度不能超过255")
     @TableField(value = "name", condition = LIKE)
     @Excel(name = "名称")
     private String name;
@@ -58,7 +59,7 @@ public class DatasourceConfig extends Entity<Long> {
      */
     @ApiModelProperty(value = "服务")
     @NotEmpty(message = "服务不能为空")
-    @Length(max = 100, message = "服务长度不能超过100")
+    @Size(max = 100, message = "服务长度不能超过100")
     @TableField(value = "application", condition = LIKE)
     @Excel(name = "服务")
     private String application;
@@ -77,7 +78,7 @@ public class DatasourceConfig extends Entity<Long> {
      */
     @ApiModelProperty(value = "账号")
     @NotEmpty(message = "账号不能为空")
-    @Length(max = 255, message = "账号长度不能超过255")
+    @Size(max = 255, message = "账号长度不能超过255")
     @TableField(value = "username", condition = LIKE)
     @Excel(name = "账号")
     private String username;
@@ -87,7 +88,7 @@ public class DatasourceConfig extends Entity<Long> {
      */
     @ApiModelProperty(value = "密码")
     @NotEmpty(message = "密码不能为空")
-    @Length(max = 255, message = "密码长度不能超过255")
+    @Size(max = 255, message = "密码长度不能超过255")
     @TableField(value = "password", condition = LIKE)
     @Excel(name = "密码")
     private String password;
@@ -97,7 +98,7 @@ public class DatasourceConfig extends Entity<Long> {
      */
     @ApiModelProperty(value = "链接")
     @NotEmpty(message = "链接不能为空")
-    @Length(max = 255, message = "链接长度不能超过255")
+    @Size(max = 255, message = "链接长度不能超过255")
     @TableField(value = "url", condition = LIKE)
     @Excel(name = "链接")
     private String url;
@@ -107,7 +108,7 @@ public class DatasourceConfig extends Entity<Long> {
      */
     @ApiModelProperty(value = "驱动")
     @NotEmpty(message = "驱动不能为空")
-    @Length(max = 255, message = "驱动长度不能超过255")
+    @Size(max = 255, message = "驱动长度不能超过255")
     @TableField(value = "driver_class_name", condition = LIKE)
     @Excel(name = "驱动")
     private String driverClassName;

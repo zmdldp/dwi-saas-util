@@ -10,7 +10,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.dwi.basic</groupId>
     <artifactId>saas-boot</artifactId>
     <name>${project.artifactId}</name>
     <description>公共模块</description>
@@ -24,15 +23,11 @@
         <dependency>
             <groupId>com.dwi.basic</groupId>
             <artifactId>saas-databases</artifactId>
-            <optional>true</optional>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.dwi.basic</groupId>
             <artifactId>saas-cache-starter</artifactId>
-            <optional>true</optional>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -55,22 +50,9 @@
             <groupId>cn.afterturn</groupId>
             <artifactId>easypoi-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-
-        <!-- jdk8 Time-->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-parameter-names</artifactId>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

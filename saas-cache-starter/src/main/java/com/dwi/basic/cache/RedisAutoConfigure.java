@@ -3,10 +3,12 @@ package com.dwi.basic.cache;
 import com.google.common.collect.Maps;
 import com.dwi.basic.cache.lock.RedisDistributedLock;
 import com.dwi.basic.cache.properties.CustomCacheProperties;
+import com.dwi.basic.cache.properties.SerializerType;
 import com.dwi.basic.cache.redis.RedisOps;
 import com.dwi.basic.cache.repository.CacheOps;
 import com.dwi.basic.cache.repository.CachePlusOps;
 import com.dwi.basic.cache.repository.impl.RedisOpsImpl;
+import com.dwi.basic.cache.utils.ProtoStuffSerializer;
 import com.dwi.basic.cache.utils.RedisObjectSerializer;
 import com.dwi.basic.lock.DistributedLock;
 import com.dwi.basic.utils.StrPool;
@@ -25,6 +27,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -65,27 +68,39 @@ public class RedisAutoConfigure {
      * @param factory redis链接工厂
      */
     @Bean("redisTemplate")
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory, RedisSerializer<Object> redisSerializer) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
 
-        setSerializer(factory, template);
+        setSerializer(factory, template, redisSerializer);
         return template;
     }
 
-    private void setSerializer(RedisConnectionFactory factory, RedisTemplate template) {
-        RedisObjectSerializer redisObjectSerializer = new RedisObjectSerializer();
+    @Bean
+    @ConditionalOnMissingBean(RedisSerializer.class)
+    public RedisSerializer<Object> redisSerializer() {
+        SerializerType serializerType = cacheProperties.getSerializerType();
+        if (SerializerType.ProtoStuff == serializerType) {
+            return new ProtoStuffSerializer();
+        } else if (SerializerType.JDK == serializerType) {
+            ClassLoader classLoader = this.getClass().getClassLoader();
+            return new JdkSerializationRedisSerializer(classLoader);
+        }
+        return new RedisObjectSerializer();
+    }
+
+    private void setSerializer(RedisConnectionFactory factory, RedisTemplate template, RedisSerializer<Object> redisSerializer) {
         RedisSerializer stringSerializer = new StringRedisSerializer();
         template.setKeySerializer(stringSerializer);
         template.setHashKeySerializer(stringSerializer);
-        template.setHashValueSerializer(redisObjectSerializer);
-        template.setValueSerializer(redisObjectSerializer);
+        template.setHashValueSerializer(redisSerializer);
+        template.setValueSerializer(redisSerializer);
         template.setConnectionFactory(factory);
     }
 
     @Bean("stringRedisTemplate")
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
         StringRedisTemplate template = new StringRedisTemplate();
-        setSerializer(factory, template);
+        template.setConnectionFactory(factory);
         return template;
     }
 
@@ -173,7 +188,7 @@ public class RedisAutoConfigure {
 
     @Bean
     @ConditionalOnMissingBean
-    public RedisOps getRedisOps(@Qualifier("redisTemplate") RedisTemplate<String, Object> redisTemplate) {
-        return new RedisOps(redisTemplate, cacheProperties.getCacheNullVal());
+    public RedisOps getRedisOps(@Qualifier("redisTemplate") RedisTemplate<String, Object> redisTemplate, StringRedisTemplate stringRedisTemplate) {
+        return new RedisOps(redisTemplate, stringRedisTemplate, cacheProperties.getCacheNullVal());
     }
 }
