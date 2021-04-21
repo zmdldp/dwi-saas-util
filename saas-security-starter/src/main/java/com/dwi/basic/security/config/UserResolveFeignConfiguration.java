@@ -81,7 +81,7 @@ public class UserResolveFeignConfiguration {
      * 用户API熔断
      *
      * @author dwi
-     * @date 2019/07/10
+     * @date 2020/07/10
      */
     @Component
     public static class UserResolveApiFallback implements UserResolveApi {

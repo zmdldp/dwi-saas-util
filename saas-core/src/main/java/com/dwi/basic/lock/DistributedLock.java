@@ -7,7 +7,7 @@ package com.dwi.basic.lock;
  * RETRY_TIMES * SLEEP_MILLIS = 10000 意味着如果一直获取不了锁，最长会等待10秒后抛超时异常
  *
  * @author dwi
- * @date 2019-08-06 10:43
+ * @date 2020-08-06 10:43
  */
 public interface DistributedLock {
 

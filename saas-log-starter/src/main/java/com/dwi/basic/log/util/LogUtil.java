@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
  * 日志工具类
  *
  * @author dwi
- * @date 2019-04-28 11:30
+ * @date 2020-04-28 11:30
  */
 @Slf4j
 public final class LogUtil {

@@ -10,7 +10,7 @@ import java.util.Map;
  * 缓存配置
  *
  * @author d
- * @date 2019/08/06
+ * @date 2020/08/06
  */
 @Data
 @ConfigurationProperties(prefix = CustomCacheProperties.PREFIX)

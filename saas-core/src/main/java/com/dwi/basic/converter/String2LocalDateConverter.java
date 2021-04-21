@@ -18,7 +18,7 @@ import static com.dwi.basic.utils.DateUtils.SLASH_DATE_FORMAT_MATCHES;
  * 解决入参为 Date类型
  *
  * @author dwi
- * @date 2019-04-30
+ * @date 2020-04-30
  */
 public class String2LocalDateConverter extends BaseDateConverter<LocalDate> implements Converter<String, LocalDate> {
 

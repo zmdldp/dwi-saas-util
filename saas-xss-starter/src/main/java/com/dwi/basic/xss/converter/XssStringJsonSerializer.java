@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * 在本项目中，没有使用该类
  *
  * @author dwi
- * @date 2019/06/28
+ * @date 2020/06/28
  */
 @Slf4j
 public class XssStringJsonSerializer extends JsonSerializer<String> {

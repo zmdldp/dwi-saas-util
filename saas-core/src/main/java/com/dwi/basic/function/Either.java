@@ -11,7 +11,7 @@
 // *
 // * @author IT牧场
 // * @author dwi
-// * @date 2019/05/15
+// * @date 2020/05/15
 // */
 //public final class Either<L, R> {
 //    /**

@@ -22,7 +22,7 @@ import static com.dwi.basic.xss.filter.XssFilter.IGNORE_PATH;
  * XSS 跨站攻击自动配置
  *
  * @author dwi
- * @date 2019/07/25
+ * @date 2020/07/25
  */
 @AllArgsConstructor
 @EnableConfigurationProperties({XssProperties.class})

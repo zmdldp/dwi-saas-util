@@ -17,7 +17,7 @@ import java.util.List;
  * XSS 工具类， 用于过滤特殊字符
  *
  * @author dwi
- * @date 2019/07/02
+ * @date 2020/07/02
  */
 @Slf4j
 public final class XssUtils {

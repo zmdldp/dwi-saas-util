@@ -13,7 +13,7 @@ import static com.dwi.basic.utils.DateUtils.DEFAULT_TIME_FORMAT;
  * 解决入参为 Date类型
  *
  * @author dwi
- * @date 2019-04-30
+ * @date 2020-04-30
  */
 public class String2LocalTimeConverter extends BaseDateConverter<LocalTime> implements Converter<String, LocalTime> {
 

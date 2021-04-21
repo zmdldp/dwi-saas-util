@@ -21,7 +21,7 @@ import static com.dwi.basic.converter.EnumSerializer.ALL_ENUM_KEY_FIELD;
  * }
  *
  * @author dwi
- * @date 2019-07-25 22:15
+ * @date 2020-07-25 22:15
  */
 @Slf4j
 public class EnumDeserializer extends StdDeserializer<Enum<?>> {

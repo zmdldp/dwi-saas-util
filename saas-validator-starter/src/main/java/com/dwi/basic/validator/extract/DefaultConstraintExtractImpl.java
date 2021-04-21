@@ -50,7 +50,7 @@ import static com.dwi.basic.utils.StrPool.SHORT_TYPE_NAME;
  * 缺省的约束提取器
  *
  * @author dwi
- * @date 2019-07-14 12:12
+ * @date 2020-07-14 12:12
  */
 @Slf4j
 public class DefaultConstraintExtractImpl implements IConstraintExtract {

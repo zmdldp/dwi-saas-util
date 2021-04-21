@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  * feign
  *
  * @author dwi
- * @date 2019-07-25 11:23
+ * @date 2020-07-25 11:23
  */
 @Slf4j
 public class ThreadLocalHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy {

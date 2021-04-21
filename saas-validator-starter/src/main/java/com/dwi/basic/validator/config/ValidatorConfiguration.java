@@ -34,7 +34,7 @@ import javax.validation.constraints.NotNull;
  * 验证器配置
  *
  * @author dwi
- * @date 2019/07/14
+ * @date 2020/07/14
  */
 public class ValidatorConfiguration {
 

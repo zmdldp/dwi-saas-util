@@ -56,7 +56,7 @@ import static com.dwi.basic.database.mybatis.conditions.Wraps.replace;
  *
  * @author dwi
  * @author hubin miemie HCL
- * @date Created on 2019/5/27 17:11
+ * @date Created on 2020/5/27 17:11
  */
 public class LbqWrapper<T> extends AbstractLambdaWrapper<T, LbqWrapper<T>>
         implements Query<LbqWrapper<T>, T, SFunction<T, ?>> {

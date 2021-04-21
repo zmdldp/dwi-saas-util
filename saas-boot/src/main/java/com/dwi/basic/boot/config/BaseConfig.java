@@ -42,7 +42,7 @@ import static com.dwi.basic.utils.DateUtils.DEFAULT_DATE_TIME_FORMAT;
  * 基础配置类
  *
  * @author dwi
- * @date 2019-06-22 22:53
+ * @date 2020-06-22 22:53
  */
 @AutoConfigureBefore(JacksonAutoConfiguration.class)
 public abstract class BaseConfig {

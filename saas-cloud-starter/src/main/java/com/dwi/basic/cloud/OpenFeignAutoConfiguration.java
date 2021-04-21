@@ -30,7 +30,7 @@ import java.util.List;
  * OpenFeign 配置
  *
  * @author dwi
- * @date 2019/07/25
+ * @date 2020/07/25
  */
 @ConditionalOnClass(Feign.class)
 @AutoConfigureAfter(EnableFeignClients.class)

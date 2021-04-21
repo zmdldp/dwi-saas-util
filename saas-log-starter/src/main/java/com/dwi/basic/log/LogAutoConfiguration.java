@@ -24,7 +24,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * 2，配置文件中saas.log.enabled=true 或者 配置文件中不存在：saas.log.enabled 值
  *
  * @author dwi
- * @date 2019/2/1
+ * @date 2020/2/1
  */
 @EnableAsync
 @Configuration

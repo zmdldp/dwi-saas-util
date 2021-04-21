@@ -15,7 +15,7 @@ import static com.dwi.basic.exception.BaseException.BASE_VALID_PARAM;
  * 断言
  *
  * @author dwi
- * @date 2019-07-22 14:44
+ * @date 2020-07-22 14:44
  * @see BizException
  * @since 4.0
  */

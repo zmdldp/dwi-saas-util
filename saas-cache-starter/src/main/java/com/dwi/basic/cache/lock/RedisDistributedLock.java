@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * redis分布式锁实现
  *
  * @author dwi
- * @date 2019-08-06 10:42
+ * @date 2020-08-06 10:42
  */
 @Slf4j
 public class RedisDistributedLock implements DistributedLock {

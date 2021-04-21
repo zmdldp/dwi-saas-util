@@ -14,7 +14,7 @@ import static com.dwi.basic.xss.utils.XssUtils.xssClean;
  * 跨站攻击请求包装器
  *
  * @author dwi
- * @date 2019-06-28 17:04
+ * @date 2020-06-28 17:04
  */
 @Slf4j
 public class XssRequestWrapper extends HttpServletRequestWrapper {

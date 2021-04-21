@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Import;
  * })
  *
  * @author dwi
- * @date 2019/09/20
+ * @date 2020/09/20
  */
 @Configuration
 @Import(SaasRabbitMqConfiguration.RabbitMqConfiguration.class)

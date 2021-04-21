@@ -4,7 +4,7 @@
 // * 处理异常的 函数
 // *
 // * @author dwi
-// * @date 2019/05/15
+// * @date 2020/05/15
 // */
 //@FunctionalInterface
 //public interface CheckedFunction<T, R> {

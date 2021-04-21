@@ -18,7 +18,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * redis 配置类
  *
  * @author dwi
- * @date 2019-08-06 10:42
+ * @date 2020-08-06 10:42
  */
 @ConditionalOnClass(RedisConnectionFactory.class)
 @EnableConfigurationProperties({RedisProperties.class})

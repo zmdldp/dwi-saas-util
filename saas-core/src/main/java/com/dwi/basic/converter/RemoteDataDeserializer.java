@@ -26,7 +26,7 @@ import java.lang.reflect.Type;
  * }
  *
  * @author dwi
- * @date 2019-07-25 22:15
+ * @date 2020-07-25 22:15
  */
 @Slf4j
 public class RemoteDataDeserializer extends StdDeserializer<RemoteData<?, ?>> {
