@@ -5,9 +5,13 @@ import cn.hutool.core.util.StrUtil;
 import com.dwi.basic.context.ContextUtil;
 import com.dwi.basic.log.entity.OptLogDTO;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 
 import java.util.function.Consumer;
@@ -20,17 +24,18 @@ import java.util.function.Consumer;
  * @date 2019-07-01 15:13
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SysLogListener {
 
     private final Consumer<OptLogDTO> consumer;
-
+    @Autowired
+    private Environment env;
     @Async
     @Order
     @EventListener(SysLogEvent.class)
     public void saveSysLog(SysLogEvent event) {
         OptLogDTO sysLog = (OptLogDTO) event.getSource();
-        if (sysLog == null || StrUtil.isEmpty(sysLog.getTenantCode())) {
+        if (sysLog == null || (!"NONE".equalsIgnoreCase(env.getProperty("saas.database.multiTenantType")) && StrUtil.isEmpty(sysLog.getTenantCode()))) {
             log.debug("租户编码不存在，忽略操作日志=={}", sysLog != null ? sysLog.getRequestUri() : "");
             return;
         }
