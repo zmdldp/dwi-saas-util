@@ -1,0 +1,6 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    com.dwi.basic.cloud.OpenFeignAutoConfiguration , \
+    com.dwi.basic.cloud.RibbonMetaFilterAutoConfiguration, \
+    com.dwi.basic.cloud.RestTemplateConfiguration, \
+    org.springframework.cloud.openfeign.EnhanceOpenFeignAutoConfiguration
+

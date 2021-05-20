@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>dwi-saas-util</artifactId>
+        <groupId>com.dwi.basic</groupId>
+        <version>1.0.0-Common-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>saas-postgis</artifactId>
+    <name>${project.artifactId}</name>
+    <description>postgis配置模块</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.dwi.basic</groupId>
+            <artifactId>saas-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        
+        <!-- postgis驱动 -->
+        <!-- <dependency>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+        </dependency> -->
+        
+        <!-- JTS 驱动-->
+        <dependency>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc-jtsparser</artifactId>
+        </dependency>
+        
+		<!-- https://mvnrepository.com/artifact/com.graphhopper.external/jackson-datatype-jts -->
+		<dependency>
+		    <groupId>com.graphhopper.external</groupId>
+		    <artifactId>jackson-datatype-jts</artifactId>
+		</dependency>
+
+      
+       <!-- GeoTools 驱动使用gt-jdbc-postgis-->
+       <!--  https://mvnrepository.com/artifact/org.geotools.jdbc/gt-jdbc-postgis -->
+		<!-- <dependency>
+		    <groupId>org.geotools.jdbc</groupId>
+		    <artifactId>gt-jdbc-postgis</artifactId>
+		</dependency>        
+        <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-shapefile</artifactId>
+        </dependency>
+	    <dependency>
+	        <groupId>org.geotools</groupId>
+	        <artifactId>gt-main</artifactId>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.geotools</groupId>
+	        <artifactId>gt-geojson</artifactId>
+	    </dependency> -->
+	    <!-- <dependency>
+	        <groupId>org.geotools</groupId>
+	        <artifactId>gt-swing</artifactId>
+	    </dependency> -->    
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+
+        <!-- 必须有这个jar 才能提示 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+    
+    <repositories>
+        <repository>
+            <id>osgeo</id>
+            <name>Open Source Geospatial Foundation Repository</name>
+            <url>https://repo.osgeo.org/repository/release/</url>
+        </repository>
+    </repositories>
+
+</project>
