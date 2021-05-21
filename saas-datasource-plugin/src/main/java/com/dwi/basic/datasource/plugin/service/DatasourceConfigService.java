@@ -1,4 +1,4 @@
-package com.dwi.basic.datasource.plugin.biz.service;
+package com.dwi.basic.datasource.plugin.service;
 
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DataSourceProperty;
 import com.dwi.basic.base.service.SuperService;

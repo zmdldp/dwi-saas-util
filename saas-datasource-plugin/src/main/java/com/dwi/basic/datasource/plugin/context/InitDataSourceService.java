@@ -2,8 +2,8 @@ package com.dwi.basic.datasource.plugin.context;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DataSourceProperty;
-import com.dwi.basic.datasource.plugin.biz.dao.DatasourceConfigMapper;
-import com.dwi.basic.datasource.plugin.biz.dao.InitDatabaseMapper;
+import com.dwi.basic.datasource.plugin.dao.DatasourceConfigMapper;
+import com.dwi.basic.datasource.plugin.dao.InitDatabaseMapper;
 import com.dwi.basic.datasource.plugin.domain.entity.DatasourceConfig;
 import com.dwi.basic.datasource.plugin.domain.enumeration.TenantConnectTypeEnum;
 import com.dwi.basic.datasource.plugin.domain.enumeration.TenantStatusEnum;

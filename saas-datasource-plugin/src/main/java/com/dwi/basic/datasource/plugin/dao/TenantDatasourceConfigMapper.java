@@ -1,4 +1,4 @@
-package com.dwi.basic.datasource.plugin.biz.dao;
+package com.dwi.basic.datasource.plugin.dao;
 
 import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import com.dwi.basic.base.mapper.SuperMapper;

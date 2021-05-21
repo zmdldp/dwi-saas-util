@@ -1,4 +1,4 @@
-package com.dwi.basic.datasource.plugin.biz.service;
+package com.dwi.basic.datasource.plugin.service;
 
 import com.dwi.basic.base.service.SuperService;
 import com.dwi.basic.datasource.plugin.domain.entity.TenantDatasourceConfig;

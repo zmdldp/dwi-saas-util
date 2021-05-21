@@ -1,10 +1,10 @@
-package com.dwi.basic.datasource.plugin.biz.service.impl;
+package com.dwi.basic.datasource.plugin.service.impl;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.dwi.basic.base.service.SuperServiceImpl;
-import com.dwi.basic.datasource.plugin.biz.dao.TenantDatasourceConfigMapper;
-import com.dwi.basic.datasource.plugin.biz.service.TenantDatasourceConfigService;
+import com.dwi.basic.datasource.plugin.dao.TenantDatasourceConfigMapper;
 import com.dwi.basic.datasource.plugin.domain.entity.TenantDatasourceConfig;
+import com.dwi.basic.datasource.plugin.service.TenantDatasourceConfigService;
 
 import org.springframework.stereotype.Service;
 
