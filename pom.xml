@@ -283,10 +283,10 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
             </plugin> -->
             <!--配置生成源码包 -->
-            <!-- <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-            </plugin> -->
+            </plugin>
             <!-- 一键更新子模块版本号 -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

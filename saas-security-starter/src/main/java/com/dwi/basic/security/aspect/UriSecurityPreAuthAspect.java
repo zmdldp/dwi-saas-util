@@ -121,6 +121,11 @@ public class UriSecurityPreAuthAspect implements ApplicationContextAware {
         if (isFeign(methodName)) {
             return;
         }
+        
+        // 超级管理员
+        if(verifyAuthFunction.hasAnyRole("SUPER_ADMIN")) {
+        	return;
+        }
 
         String condition = getCondition(preAuth, targetClass);
         if (StrUtil.isBlank(condition)) {
