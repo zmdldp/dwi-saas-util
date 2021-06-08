@@ -57,6 +57,7 @@
         <aliyun.java.sdk.dysmsapi>1.1.0</aliyun.java.sdk.dysmsapi>
         <bce-java-sdk.version>0.10.21</bce-java-sdk.version>
         <oss.version>3.1.0</oss.version>
+        <pagehelper.boot.version>1.2.12</pagehelper.boot.version>
 
         <apache.xmlgraphics.version>1.7</apache.xmlgraphics.version>
         <lombok.version>1.18.20</lombok.version>
@@ -223,6 +224,13 @@
                 <groupId>com.github.ulisesbocchio</groupId>
                 <artifactId>jasypt-spring-boot-starter</artifactId>
                 <version>${jasypt.version}</version>
+            </dependency>
+            
+            <!-- pagehelper 分页插件 和 MP分页插件并存-->
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.boot.version}</version>
             </dependency>
 
             <dependency>

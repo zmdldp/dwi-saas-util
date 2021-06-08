@@ -35,7 +35,7 @@ import static cn.hutool.core.date.DatePattern.NORM_TIME_PATTERN;
  * 修改时间：2018/4/24
  */
 @Slf4j
-public final class DateUtils {
+public final class DateUtils extends org.apache.commons.lang3.time.DateUtils{
     public static final String DEFAULT_YEAR_FORMAT = "yyyy";
     public static final String DEFAULT_MONTH_FORMAT = "yyyy-MM";
     public static final String DEFAULT_MONTH_FORMAT_SLASH = "yyyy/MM";
@@ -86,6 +86,31 @@ public final class DateUtils {
         DATE_FORMAT.put(DEFAULT_DATE_FORMAT_EN, DEFAULT_DATE_FORMAT_EN_MATCHES);
     }
 
+    private static String[] parsePatterns = {
+            "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM",
+            "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM",
+            "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy.MM"};
+
+    
+    /**
+     * 日期型字符串转化为日期 格式
+     */
+    public static Date parseDate(Object str)
+    {
+        if (str == null)
+        {
+            return null;
+        }
+        try
+        {
+            return parseDate(str.toString(), parsePatterns);
+        }
+        catch (ParseException e)
+        {
+            return null;
+        }
+    }
+    
     /**
      * 解析日期
      *

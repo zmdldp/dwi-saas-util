@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.dwi.basic.boot.filter.RequestReplaceFilter;
 import com.dwi.basic.boot.undertow.UndertowServerFactoryCustomizer;
 import com.dwi.basic.converter.RemoteDataDeserializer;
 import com.dwi.basic.converter.String2DateConverter;
@@ -168,5 +169,15 @@ public abstract class BaseConfig {
         public GlobalMvcConfigurer getGlobalMvcConfigurer() {
             return new GlobalMvcConfigurer();
         }
+    }
+    
+    /**
+     * 解决request.getInputStream()只能读取一次的问题
+     * 
+     * @return
+     */
+    @Bean
+    public RequestReplaceFilter requestReplaceFilter() {
+    	return new RequestReplaceFilter();
     }
 }

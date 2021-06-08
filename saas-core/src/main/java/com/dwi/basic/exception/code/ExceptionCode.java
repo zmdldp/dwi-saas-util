@@ -24,6 +24,7 @@ public enum ExceptionCode implements BaseExceptionCode {
     SERVICE_MAPPER_ERROR(-11, "Mapper类转换异常"),
     CAPTCHA_ERROR(-12, "验证码校验失败"),
     JSON_PARSE_ERROR(-13, "JSON解析异常"),
+    SYSTEM_DATE_ERROR(-14, "系统数据异常"),
 
 
     OK(200, "OK"),
@@ -48,12 +49,16 @@ public enum ExceptionCode implements BaseExceptionCode {
     BAD_GATEWAY(502, "网关错误"),
     GATEWAY_TIMEOUT(504, "网关超时"),
     //系统相关 end
-
-    REQUIRED_FILE_PARAM_EX(1001, "请求中必须至少包含一个有效文件"),
+    
+    USER_NOT_FOUND(1000, "用户不存在"),
+    DATA_NOT_FOUND(1001, "数据不存在"),
+    SERVICE_RPC_ERROR(1002, "服务调用失败"), 
 
     DATA_SAVE_ERROR(2000, "新增数据失败"),
     DATA_UPDATE_ERROR(2001, "修改数据失败"),
     TOO_MUCH_DATA_ERROR(2002, "批量新增数据过多"),
+
+    REQUIRED_FILE_PARAM_EX(4001, "请求中必须至少包含一个有效文件"),
     //jwt token 相关 start
 
     JWT_BASIC_INVALID(40000, "无效的基本身份验证令牌"),
@@ -65,7 +70,7 @@ public enum ExceptionCode implements BaseExceptionCode {
     JWT_USER_INVALID(40006, "用户名或密码错误"),
     JWT_USER_ENABLED(40007, "用户已经被禁用！"),
     JWT_OFFLINE(40008, "您已在另一个设备登录！"),
-    JWT_NOT_LOGIN(40009, "请先登录！"),
+    JWT_NOT_LOGIN(40009, "登录超时，请重新登录！"),
     //jwt token 相关 end
 
     ;

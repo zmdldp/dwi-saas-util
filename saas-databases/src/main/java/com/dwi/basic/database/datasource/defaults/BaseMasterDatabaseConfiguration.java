@@ -94,8 +94,8 @@ public abstract class BaseMasterDatabaseConfiguration extends BaseDatabaseConfig
      *
      * @return Druid数据源
      */
-    @Bean(name = DATABASE_PREFIX + "DruidDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.druid")
+    @Bean(name = DATABASE_PREFIX + "DruidDataSource" , initMethod = "init")
+    //@ConfigurationProperties(prefix = "spring.datasource.druid")
     public DataSource druidDataSource() {
         return DruidDataSourceBuilder.create().build();
     }
@@ -103,7 +103,7 @@ public abstract class BaseMasterDatabaseConfiguration extends BaseDatabaseConfig
     @Primary
     @Bean(name = DATABASE_PREFIX + "DataSource")
     public DataSource dataSource(@Qualifier(DATABASE_PREFIX + "DruidDataSource") DataSource dataSource) {
-        if (ArrayUtil.contains(DEV_PROFILES, this.profiles)) {
+        if (databaseProperties.getP6spy()) {
             return new P6DataSource(dataSource);
         } else {
             return dataSource;
@@ -123,6 +123,7 @@ public abstract class BaseMasterDatabaseConfiguration extends BaseDatabaseConfig
      * @throws Exception 异常
      */
     @Bean(DATABASE_PREFIX + "SqlSessionFactory")
+    @Primary
     public SqlSessionFactory getSqlSessionFactory(@Qualifier(DATABASE_PREFIX + "DataSource") DataSource dataSource) throws Exception {
         return super.sqlSessionFactory(dataSource);
     }

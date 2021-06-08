@@ -42,7 +42,7 @@ public class PageParams<T> {
     @ApiModelProperty(value = "排序,默认createTime", allowableValues = "id,createTime,updateTime", example = "id")
     private String sort = SuperEntity.FIELD_ID;
 
-    @ApiModelProperty(value = "排序规则, 默认descending", allowableValues = "descending,ascending", example = "descending")
+    @ApiModelProperty(value = "排序规则, 默认descending", allowableValues = "descending,descend,desc,ascending,ascend,asc", example = "descending")
     private String order = "descending";
 
     @ApiModelProperty("扩展参数")
@@ -81,7 +81,7 @@ public class PageParams<T> {
                 underlineSort = AntiSqlFilterUtils.getSafeValue(underlineSort);
             }
             // 排序支持antd
-            orders.add(StrUtil.equalsAny(orderArr[i], "ascending", "ascend") ? OrderItem.asc(underlineSort) : OrderItem.desc(underlineSort));
+            orders.add(StrUtil.equalsAny(orderArr[i], "ascending", "ascend", "asc") ? OrderItem.asc(underlineSort) : OrderItem.desc(underlineSort));
         }
 
         page.setOrders(orders);

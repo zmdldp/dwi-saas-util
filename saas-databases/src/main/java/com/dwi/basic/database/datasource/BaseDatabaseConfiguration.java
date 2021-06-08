@@ -58,9 +58,9 @@ public abstract class BaseDatabaseConfiguration implements InitializingBean {
     /**
      * 测试环境
      */
-    protected static final String[] DEV_PROFILES = new String[]{"dev"};
-    @Value("${spring.profiles.active:dev}")
-    protected String profiles;
+//    protected static final String[] DEV_PROFILES = new String[]{"dev"};
+//    @Value("${spring.profiles.active:dev}")
+//    protected String profiles;
 
     protected final MybatisPlusProperties properties;
     protected final DatabaseProperties databaseProperties;

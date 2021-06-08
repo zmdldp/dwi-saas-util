@@ -35,7 +35,11 @@ public class DatabaseProperties {
     /**
      * 是否启用 seata
      */
-    private Boolean isSeata = false;
+    private Boolean isSeata = false;    
+    /**
+     * 是否p6spy在控制台打印日志
+     */
+    private Boolean p6spy = false;
     /**
      * 分页大小限制
      */

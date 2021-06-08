@@ -38,6 +38,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -301,9 +303,10 @@ public class SysLogAspect {
 
     private String getArgs(Object[] args, HttpServletRequest request) {
         String strArgs = StrPool.EMPTY;
-
+        
         try {
             if (!request.getContentType().contains(FORM_DATA_CONTENT_TYPE)) {
+            	args = Arrays.stream(args).filter(item -> !(item instanceof ServletRequest || item instanceof ServletResponse)).toArray();
                 strArgs = JsonUtil.toJson(args);
             }
         } catch (Exception e) {
